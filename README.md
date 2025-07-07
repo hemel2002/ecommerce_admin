@@ -1,4 +1,4 @@
-# yt_ecommerce_admin_panel
+# admin
 
 A new Flutter project.
 

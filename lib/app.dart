@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yt_ecommerce_admin_panel/common/widgets/layout/headers/header.dart';
-import 'package:yt_ecommerce_admin_panel/common/widgets/layout/sidebars/sidebar.dart';
+import 'package:ecommerce_admin_panel/common/widgets/layout/headers/header.dart';
+import 'package:ecommerce_admin_panel/common/widgets/layout/sidebars/sidebar.dart';
 
 import 'utils/constants/colors.dart';
 import 'utils/constants/text_strings.dart';

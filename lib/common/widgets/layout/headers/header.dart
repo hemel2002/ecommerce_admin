@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:yt_ecommerce_admin_panel/common/widgets/images/t_rounded_image.dart';
-import 'package:yt_ecommerce_admin_panel/utils/constants/colors.dart';
-import 'package:yt_ecommerce_admin_panel/utils/constants/enums.dart';
-import 'package:yt_ecommerce_admin_panel/utils/constants/image_strings.dart';
-import 'package:yt_ecommerce_admin_panel/utils/constants/sizes.dart';
-import 'package:yt_ecommerce_admin_panel/utils/device/device_utility.dart';
+import 'package:ecommerce_admin_panel/common/widgets/images/t_rounded_image.dart';
+import 'package:ecommerce_admin_panel/utils/constants/colors.dart';
+import 'package:ecommerce_admin_panel/utils/constants/enums.dart';
+import 'package:ecommerce_admin_panel/utils/constants/image_strings.dart';
+import 'package:ecommerce_admin_panel/utils/constants/sizes.dart';
+import 'package:ecommerce_admin_panel/utils/device/device_utility.dart';
 
 class THeader extends StatelessWidget implements PreferredSizeWidget {
   const THeader({super.key, required this.scaffoldKey});
