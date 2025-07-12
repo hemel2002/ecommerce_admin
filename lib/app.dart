@@ -1,3 +1,5 @@
+import 'package:ecommerce_admin_panel/Routes/app_routes.dart';
+import 'package:ecommerce_admin_panel/Routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,8 +48,7 @@ class App extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
-                  '🎉 Starter Kit Ready! 🎉\n\n'
-                  'Your project structure is set up and running. Happy coding!',
+                  'Hey there',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
@@ -92,6 +93,8 @@ class App extends StatelessWidget {
           ),
         ),
       ),
+      getPages: TApproute.pages,
+      initialRoute: TRoutes.login,
     );
   }
 }
