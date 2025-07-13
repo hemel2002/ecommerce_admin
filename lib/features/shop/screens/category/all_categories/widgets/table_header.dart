@@ -13,11 +13,15 @@ class CategoryTableHeader extends StatelessWidget {
         ElevatedButton(
             onPressed: () => Get.toNamed(TRoutes.createCategory),
             child: const Text('Create New Category')),
-        TextFormField(
-          decoration: const InputDecoration(
-              hintText: 'Search Categories',
-              prefixIcon: Icon(Iconsax.search_normal)),
-        )
+        const SizedBox(
+            width: 16), // Add spacing between button and search field
+        Expanded(
+          child: TextFormField(
+            decoration: const InputDecoration(
+                hintText: 'Search Categories',
+                prefixIcon: Icon(Iconsax.search_normal)),
+          ),
+        ),
       ],
     );
   }
