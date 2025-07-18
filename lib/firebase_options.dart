@@ -3,7 +3,6 @@
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
-import 'firebase_options.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -24,15 +23,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -46,29 +39,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCUgQM4mCtGOkoC6P6akis3NoOWaRE6P3w',
-    appId: '1:436918710355:web:088c2f897f2a31601f56a6',
-    messagingSenderId: '436918710355',
-    projectId: 'food-b56ae',
-    authDomain: 'food-b56ae.firebaseapp.com',
-    storageBucket: 'food-b56ae.appspot.com',
-    measurementId: 'G-71MWFTZYD3',
+    apiKey: 'AIzaSyAnmDeliwWL_jpbiLGixOLXULnev7zuHOE',
+    appId: '1:370802731084:web:3fc6b7a31d552b6a7eace9',
+    messagingSenderId: '370802731084',
+    projectId: 'swift-26949',
+    authDomain: 'swift-26949.firebaseapp.com',
+    storageBucket: 'swift-26949.firebasestorage.app',
+    measurementId: 'G-1M4EW8CM09',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCZi2_aRiXnDboX_dBX0tznzheahqCA-lA',
-    appId: '1:436918710355:android:c4e5d300eb75d46b1f56a6',
-    messagingSenderId: '436918710355',
-    projectId: 'food-b56ae',
-    storageBucket: 'food-b56ae.appspot.com',
+    apiKey: 'AIzaSyDoV6UvEYZUv6tmI4xseiaRt49iRP3LKX4',
+    appId: '1:370802731084:android:19551b35d578c5817eace9',
+    messagingSenderId: '370802731084',
+    projectId: 'swift-26949',
+    storageBucket: 'swift-26949.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD8z7p_NX8LbH4ECVMASBlBsMBWYPcbMTY',
-    appId: '1:436918710355:ios:7e7a8408851fb12b1f56a6',
-    messagingSenderId: '436918710355',
-    projectId: 'food-b56ae',
-    storageBucket: 'food-b56ae.appspot.com',
-    iosBundleId: 'com.example.ytEcommerceAdminPanel',
+    apiKey: 'AIzaSyBeAul_PnVRgCLq1bdX6gL6JUz7TMuqe6U',
+    appId: '1:370802731084:ios:b7e2434058c4b1c47eace9',
+    messagingSenderId: '370802731084',
+    projectId: 'swift-26949',
+    storageBucket: 'swift-26949.firebasestorage.app',
+    iosBundleId: 'com.example.admin',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyBeAul_PnVRgCLq1bdX6gL6JUz7TMuqe6U',
+    appId: '1:370802731084:ios:b7e2434058c4b1c47eace9',
+    messagingSenderId: '370802731084',
+    projectId: 'swift-26949',
+    storageBucket: 'swift-26949.firebasestorage.app',
+    iosBundleId: 'com.example.admin',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAnmDeliwWL_jpbiLGixOLXULnev7zuHOE',
+    appId: '1:370802731084:web:29359ebd8cbe129c7eace9',
+    messagingSenderId: '370802731084',
+    projectId: 'swift-26949',
+    authDomain: 'swift-26949.firebaseapp.com',
+    storageBucket: 'swift-26949.firebasestorage.app',
+    measurementId: 'G-54XS4Z1G9P',
   );
 }

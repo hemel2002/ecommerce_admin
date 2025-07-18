@@ -94,7 +94,7 @@ class App extends StatelessWidget {
         ),
       ),
       getPages: TApproute.pages,
-      initialRoute: TRoutes.login,
+      initialRoute: TRoutes.categories,
     );
   }
 }
