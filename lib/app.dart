@@ -1,5 +1,6 @@
 import 'package:ecommerce_admin_panel/Routes/app_routes.dart';
 import 'package:ecommerce_admin_panel/Routes/routes.dart';
+import 'package:ecommerce_admin_panel/features/authentication/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -20,6 +21,10 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: MyCustomScrollBehavior(),
       getPages: TApproute.pages,
+      unknownRoute: GetPage(
+        name: '/notfound',
+        page: () => AdminLoginScreen(), // Redirect unknown routes to login
+      ),
       initialRoute:
           TRoutes.login, // Changed to login first, then navigate to categories
     );
