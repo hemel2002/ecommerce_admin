@@ -2,8 +2,9 @@ import 'package:ecommerce_admin_panel/Routes/routes.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/Reset_password/Responsive_screens/reset_password.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/Forget_password/Responsive_screens/forget_password.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/login/login.dart';
-import 'package:ecommerce_admin_panel/features/shop/screens/category/all_categories/categories.dart';
-import 'package:ecommerce_admin_panel/features/shop/screens/dashboard/dashboard.dart';
+import 'package:ecommerce_admin_panel/features/categories/screens.category/responsive_screens/category/all_categories/categories.dart';
+import 'package:ecommerce_admin_panel/features/media/screens.media/media_screen.dart';
+import 'package:ecommerce_admin_panel/features/shop/screens.deshboard/dashboard.dart';
 import 'package:get/get.dart';
 
 class TApproute {
@@ -16,5 +17,6 @@ class TApproute {
     GetPage(name: TRoutes.resetPassword, page: () => ResetScreen()),
     GetPage(name: TRoutes.categories, page: () => const CategoriesScreen()),
     GetPage(name: TRoutes.dashboard, page: () => const DashboardScreen()),
+    GetPage(name: TRoutes.media, page: () => const MediaScreen()),
   ];
 }

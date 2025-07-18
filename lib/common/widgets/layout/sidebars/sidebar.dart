@@ -74,6 +74,11 @@ class TSidebar extends StatelessWidget {
                   route: TRoutes.categories,
                 ),
                 MenuWidget(
+                  icon: Icons.perm_media_outlined,
+                  title: "Media",
+                  route: TRoutes.media,
+                ),
+                MenuWidget(
                   icon: Icons.people_outline,
                   title: "Customers",
                   route: TRoutes.customers ?? '/customers',

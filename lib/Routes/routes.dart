@@ -19,6 +19,7 @@ class TRoutes {
   static const String categories = '/categories';
   static const String createCategory = '/createCategory';
   static const String editCategory = '/editCategory';
+  static const String media = '/media';
 
   static const String categoryDetails = '/category-details';
   static const String cart = '/cart';

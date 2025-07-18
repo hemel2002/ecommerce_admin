@@ -1,20 +1,14 @@
-import 'package:ecommerce_admin_panel/common/widgets/data_table/paginated_data_table.dart';
-import 'package:ecommerce_admin_panel/common/widgets/layout/dashboard_layout.dart';
-import 'package:ecommerce_admin_panel/features/shop/screens/dashboard/responsive_screens/dashboard_mobile.dart';
+import 'package:ecommerce_admin_panel/features/shop/screens.deshboard/responsive_screens/dashboard_mobile.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:ecommerce_admin_panel/utils/constants/sizes.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:data_table_2/data_table_2.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // final DashboardController controller = Get.put(DashboardController());
-
-    return DashboardMobileScreen();
+    // For now, we're using the mobile layout
+    // You can add responsive logic here later for desktop/tablet layouts
+    return const DashboardMobileScreen();
     // Scaffold(
     //     body: Padding(
     //       padding: const EdgeInsets.all(30),
