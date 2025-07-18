@@ -3,6 +3,7 @@ import 'package:ecommerce_admin_panel/features/authentication/screens/Reset_pass
 import 'package:ecommerce_admin_panel/features/authentication/screens/Forget_password/Responsive_screens/forget_password.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/login/login.dart';
 import 'package:ecommerce_admin_panel/features/shop/screens/category/all_categories/categories.dart';
+import 'package:ecommerce_admin_panel/features/shop/screens/category/all_categories/createCategories.dart';
 import 'package:get/get.dart';
 
 class TApproute {
@@ -14,5 +15,7 @@ class TApproute {
     GetPage(name: TRoutes.forgotPassword, page: () => ForgetScreen()),
     GetPage(name: TRoutes.resetPassword, page: () => ResetScreen()),
     GetPage(name: TRoutes.categories, page: () => const CategoriesScreen()),
+    GetPage(
+        name: TRoutes.createCategory, page: () => const CreateCategoryScreen()),
   ];
 }

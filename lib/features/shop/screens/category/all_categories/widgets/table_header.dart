@@ -1,28 +1,53 @@
-import 'package:ecommerce_admin_panel/Routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CategoryTableHeader extends StatelessWidget {
-  const CategoryTableHeader({super.key});
+  const CategoryTableHeader({
+    super.key,
+    required this.onPressed,
+    required this.buttonText,
+    required this.searchController,
+    this.searchOnChanged,
+  });
+
+  final VoidCallback onPressed;
+  final String buttonText;
+  final TextEditingController searchController;
+  final Function(String)? searchOnChanged;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        ElevatedButton(
-            onPressed: () => Get.toNamed(TRoutes.createCategory),
-            child: const Text('Create New Category')),
-        const SizedBox(
-            width: 16), // Add spacing between button and search field
-        Expanded(
-          child: TextFormField(
-            decoration: const InputDecoration(
-                hintText: 'Search Categories',
-                prefixIcon: Icon(Iconsax.search_normal)),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Column(
+        children: [
+          // Button - Full width
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: onPressed,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(buttonText),
+            ),
           ),
-        ),
-      ],
+
+          const SizedBox(height: 16),
+
+          // Search Field - Full width
+          TextFormField(
+            controller: searchController,
+            onChanged: searchOnChanged,
+            decoration: const InputDecoration(
+              hintText: 'Search categories...',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
