@@ -1,5 +1,8 @@
+import 'package:ecommerce_admin_panel/common/widgets/shimmers/shimmer.dart';
+import 'package:ecommerce_admin_panel/features/authentication/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:ecommerce_admin_panel/common/widgets/images/t_rounded_image.dart';
 import 'package:ecommerce_admin_panel/utils/constants/colors.dart';
@@ -14,6 +17,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Controller = UserController.instance;
     return Container(
       decoration: BoxDecoration(
         color: TColors.white,
@@ -42,19 +46,28 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(
             width: (TSizes.spaceBtwItems / 2),
           ),
-          Row(
-            children: [
-              TRoundedImage(
-                imageType: ImageType.asset,
-                image: TImages.user,
-                height: 40,
-                width: 40,
-                padding: 2,
-              ),
-              SizedBox(
-                width: TSizes.spaceBtwItems,
-              )
-            ],
+          Obx(
+            () => Row(
+              children: [
+                Controller.loading.value
+                    ? const TShimmerEffect(width: 40, height: 40)
+                    : TRoundedImage(
+                        imageType:
+                            Controller.user.value.profilePicture.isNotEmpty
+                                ? ImageType.network
+                                : ImageType.asset,
+                        image: Controller.user.value.profilePicture.isNotEmpty
+                            ? Controller.user.value.profilePicture
+                            : TImages.user,
+                        height: 40,
+                        width: 40,
+                        padding: 2,
+                      ),
+                SizedBox(
+                  width: TSizes.spaceBtwItems,
+                )
+              ],
+            ),
           )
         ],
       ),

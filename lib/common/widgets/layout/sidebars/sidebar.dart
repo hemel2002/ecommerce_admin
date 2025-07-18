@@ -61,7 +61,7 @@ class TSidebar extends StatelessWidget {
                 MenuWidget(
                   title: 'Dashboard',
                   icon: Icons.dashboard_outlined,
-                  route: TRoutes.home,
+                  route: TRoutes.dashboard,
                 ),
                 MenuWidget(
                   icon: Icons.shopping_cart_outlined,
