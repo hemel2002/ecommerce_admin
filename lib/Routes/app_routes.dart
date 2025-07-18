@@ -1,5 +1,4 @@
 import 'package:ecommerce_admin_panel/Routes/routes.dart';
-import 'package:ecommerce_admin_panel/Routes/routes_middleware.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/Reset_password/Responsive_screens/reset_password.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/Forget_password/Responsive_screens/forget_password.dart';
 import 'package:ecommerce_admin_panel/features/authentication/screens/login/login.dart';
@@ -16,9 +15,6 @@ class TApproute {
     GetPage(name: TRoutes.forgotPassword, page: () => ForgetScreen()),
     GetPage(name: TRoutes.resetPassword, page: () => ResetScreen()),
     GetPage(name: TRoutes.categories, page: () => const CategoriesScreen()),
-    GetPage(
-        name: TRoutes.dashboard,
-        page: () => const DashboardScreen(),
-        middlewares: [TRouteMiddleware()]),
+    GetPage(name: TRoutes.dashboard, page: () => const DashboardScreen()),
   ];
 }
