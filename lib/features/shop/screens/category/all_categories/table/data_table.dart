@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ecommerce_admin_panel/features/shop/screens/category/all_categories/table/table_source.dart';
 
 class CategoryTable extends StatelessWidget {
   const CategoryTable({super.key});
@@ -8,16 +7,41 @@ class CategoryTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: PaginatedDataTable(
-        header: const Text('Categories'),
-        columns: const [
-          DataColumn(label: Text("Category")),
-          DataColumn(label: Text("Products")),
-          DataColumn(label: Text("Status")),
-          DataColumn(label: Text("Actions")),
-        ],
-        source: CategoryRows(context), // ✅ Pass valid context
-        rowsPerPage: 5,
+      child: Container(
+        constraints: BoxConstraints(
+          minWidth: MediaQuery.of(context).size.width,
+        ),
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Category')),
+            DataColumn(label: Text('Parent Category')),
+            DataColumn(label: Text('Featured')),
+            DataColumn(label: Text('Date')),
+            DataColumn(label: Text('Actions'), numeric: true),
+          ],
+          rows: const [
+            // Example row - replace with your actual data
+            DataRow(cells: [
+              DataCell(Text('Electronics')),
+              DataCell(Text('None')),
+              DataCell(Icon(Icons.star, color: Colors.amber)),
+              DataCell(Text('2023-07-18')),
+              DataCell(Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: null,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: null,
+                  ),
+                ],
+              )),
+            ]),
+            // Add more rows as needed
+          ],
+        ),
       ),
     );
   }
