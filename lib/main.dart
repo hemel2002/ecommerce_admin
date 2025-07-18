@@ -1,7 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ecommerce_admin_panel/data/repositories/authentication/authentication_repository.dart';
+import 'package:ecommerce_admin_panel/features/authentication/controllers/user_controller.dart';
+import 'package:ecommerce_admin_panel/utils/helpers/network_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ecommerce_admin_panel/firebase_options.dart';
 import 'app.dart';
 
@@ -9,13 +12,23 @@ import 'app.dart';
 Future<void> main() async {
   // Ensure that widgets are initialized
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // Initialize GetX Local Storage
 
-  // Remove # sign from url
-  setPathUrlStrategy();
+  // Initialize GetX Local Storage
+  await GetStorage.init();
+
+  // Initialize Network Manager
+  Get.put(NetworkManager());
 
   // Initialize Firebase & Authentication Repository
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+      .then((value) {
+    Get.put(AuthenticationRepository());
+
+    // Initialize User Controller AFTER Firebase is ready
+    Get.put(UserController());
+  }).catchError((error) {
+    debugPrint('Error initializing Firebase: $error');
+  });
 
   // Main App Starts here...
   runApp(App());

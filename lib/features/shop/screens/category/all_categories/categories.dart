@@ -1,4 +1,5 @@
 import 'package:ecommerce_admin_panel/common/widgets/containers/rounded_container.dart';
+import 'package:ecommerce_admin_panel/common/widgets/layout/dashboard_layout.dart';
 import 'package:ecommerce_admin_panel/features/shop/screens/category/all_categories/widgets/table_header.dart';
 import 'package:ecommerce_admin_panel/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ class CategoriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DashboardLayout(
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(TSizes.defaultSpace),
