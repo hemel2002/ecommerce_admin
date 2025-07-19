@@ -7,7 +7,7 @@ class MediaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DashboardLayout(
+    return DashboardLayout(
       body: MediaMobileScreen(),
     );
   }

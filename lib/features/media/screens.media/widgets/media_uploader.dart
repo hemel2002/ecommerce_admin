@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ecommerce_admin_panel/common/widgets/containers/rounded_container.dart';
+import 'package:ecommerce_admin_panel/common/widgets/shimmers/shimmer.dart';
 import 'package:ecommerce_admin_panel/features/media/controllers/media_controller.dart';
 import 'package:ecommerce_admin_panel/features/media/screens.media/widgets/floder_dropdown.dart';
 import 'package:ecommerce_admin_panel/utils/constants/colors.dart';
@@ -133,89 +134,95 @@ class MediaUploader extends StatelessWidget {
 
                   // Image Preview Area
                   Obx(
-                    () => controller.uploadedFiles.isNotEmpty
-                        ? Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: TSizes.spaceBtwItems / 2,
-                            runSpacing: TSizes.spaceBtwItems / 2,
-                            children: controller.uploadedFiles.map((file) {
-                              return Stack(
-                                children: [
-                                  Container(
-                                    width: 90,
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: TColors.primaryBackground,
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: Image.file(
-                                        file,
+                    () => controller.isLoading.value
+                        ? _buildShimmerLoading()
+                        : controller.uploadedFiles.isNotEmpty
+                            ? Wrap(
+                                alignment: WrapAlignment.start,
+                                spacing: TSizes.spaceBtwItems / 2,
+                                runSpacing: TSizes.spaceBtwItems / 2,
+                                children: controller.uploadedFiles.map((file) {
+                                  return Stack(
+                                    children: [
+                                      Container(
                                         width: 90,
                                         height: 90,
-                                        fit: BoxFit.cover,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: TColors.primaryBackground,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: Image.file(
+                                            file,
                                             width: 90,
                                             height: 90,
-                                            color: TColors.primaryBackground,
-                                            child: const Icon(
-                                              Icons.error,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) {
+                                              return Container(
+                                                width: 90,
+                                                height: 90,
+                                                color:
+                                                    TColors.primaryBackground,
+                                                child: const Icon(
+                                                  Icons.error,
+                                                  color: Colors.red,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      // Remove button for each image
+                                      Positioned(
+                                        top: 4,
+                                        right: 4,
+                                        child: GestureDetector(
+                                          onTap: () =>
+                                              controller.removeFile(file),
+                                          child: Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
                                               color: Colors.red,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
                                             ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  // Remove button for each image
-                                  Positioned(
-                                    top: 4,
-                                    right: 4,
-                                    child: GestureDetector(
-                                      onTap: () => controller.removeFile(file),
-                                      child: Container(
-                                        width: 20,
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: Colors.white,
-                                          size: 14,
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                          ),
                                         ),
                                       ),
+                                    ],
+                                  );
+                                }).toList(),
+                              )
+                            : Container(
+                                width: double.infinity,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: TColors.borderSecondary,
+                                    style: BorderStyle.solid,
+                                  ),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'No images selected',
+                                    style: TextStyle(
+                                      color: TColors.darkGrey,
+                                      fontSize: 14,
                                     ),
                                   ),
-                                ],
-                              );
-                            }).toList(),
-                          )
-                        : Container(
-                            width: double.infinity,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: TColors.borderSecondary,
-                                style: BorderStyle.solid,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'No images selected',
-                                style: TextStyle(
-                                  color: TColors.darkGrey,
-                                  fontSize: 14,
                                 ),
                               ),
-                            ),
-                          ),
                   ), // Image Preview Area
                   const SizedBox(height: TSizes.spaceBtwSections),
 
@@ -262,5 +269,21 @@ class MediaUploader extends StatelessWidget {
         ],
       ), // Column
     ); // ConstrainedBox
+  }
+
+  // Shimmer loading effect for image preview
+  Widget _buildShimmerLoading() {
+    return Wrap(
+      alignment: WrapAlignment.start,
+      spacing: TSizes.spaceBtwItems / 2,
+      runSpacing: TSizes.spaceBtwItems / 2,
+      children: List.generate(3, (index) {
+        return const TShimmerEffect(
+          width: 90,
+          height: 90,
+          radius: 8,
+        );
+      }),
+    );
   }
 }

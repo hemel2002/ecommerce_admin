@@ -1,5 +1,6 @@
 import 'package:ecommerce_admin_panel/data/repositories/authentication/authentication_repository.dart';
 import 'package:ecommerce_admin_panel/features/authentication/controllers/user_controller.dart';
+import 'package:ecommerce_admin_panel/features/media/controllers/media_controller.dart';
 import 'package:ecommerce_admin_panel/utils/helpers/network_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,12 +33,16 @@ Future<void> main() async {
 
   // Initialize Firebase & Authentication Repository with duplicate app handling
   try {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+    await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform)
         .then((value) {
       Get.put(AuthenticationRepository());
 
       // Initialize User Controller AFTER Firebase is ready
       Get.put(UserController());
+
+      // Initialize Media Controller globally
+      Get.put(MediaController());
     });
   } catch (e) {
     // If Firebase is already initialized, continue
@@ -46,6 +51,7 @@ Future<void> main() async {
       // Still initialize the controllers if Firebase is already ready
       Get.put(AuthenticationRepository());
       Get.put(UserController());
+      Get.put(MediaController());
     } else {
       debugPrint('Error initializing Firebase: $e');
       rethrow;
