@@ -4,6 +4,7 @@ import 'package:ecommerce_admin_panel/utils/exceptions/firebase_exceptions.dart'
 import 'package:ecommerce_admin_panel/utils/exceptions/format_exceptions.dart';
 import 'package:ecommerce_admin_panel/utils/exceptions/platform_exceptions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
@@ -18,9 +19,14 @@ class AuthenticationRepository extends GetxController {
   }
 
   void ScreenRedirect() {
+    // For admin panel, be more permissive with authentication
     if (isAuthenticated()) {
-      Get.offAllNamed(TRoutes.dashboard);
+      // User is authenticated, allow them to continue
+      // Don't force redirect to dashboard if they're already on another page
+      debugPrint('User is authenticated: ${_auth.currentUser?.email}');
     } else {
+      // Only redirect to login if truly not authenticated
+      debugPrint('User not authenticated, redirecting to login');
       Get.offAllNamed(TRoutes.login);
     }
   }

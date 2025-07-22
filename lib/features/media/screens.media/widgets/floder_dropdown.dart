@@ -17,32 +17,34 @@ class MediaFolderDropdown extends StatelessWidget {
     final controller = MediaController.instance;
 
     return Obx(
-      () => SizedBox(
-        width: 140,
-        child: DropdownButtonFormField<MediaCategory>(
-          isExpanded: false,
-          value: controller.selectedCategory.value,
-          items: MediaCategory.values
-              .map((category) => DropdownMenuItem(
-                    value: category,
-                    child: Text(
-                      category.name.capitalize!,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ))
-              .toList(),
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(TSizes.sm),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: TSizes.md,
-              vertical: TSizes.sm,
-            ),
+      () => DropdownButtonFormField<MediaCategory>(
+        isExpanded: true,
+        value: controller.selectedCategory.value == MediaCategory.folders
+            ? null
+            : controller.selectedCategory.value,
+        hint: const Text('Select Folder'),
+        items: MediaCategory.values
+            .where((category) =>
+                category != MediaCategory.folders) // Exclude folders option
+            .map((category) => DropdownMenuItem(
+                  value: category,
+                  child: Text(
+                    category.name.capitalize!,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(TSizes.sm),
           ),
-        ), // DropdownButtonFormField
-      ), // SizedBox
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: TSizes.md,
+            vertical: TSizes.sm,
+          ),
+        ),
+      ), // DropdownButtonFormField
     ); // Obx
   }
 }

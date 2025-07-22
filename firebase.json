@@ -1,1 +1,47 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"swift-26949","appId":"1:370802731084:android:19551b35d578c5817eace9","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"swift-26949","appId":"1:370802731084:ios:b7e2434058c4b1c47eace9","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"swift-26949","configurations":{"android":"1:370802731084:android:19551b35d578c5817eace9","ios":"1:370802731084:ios:b7e2434058c4b1c47eace9","macos":"1:370802731084:ios:b7e2434058c4b1c47eace9","web":"1:370802731084:web:3fc6b7a31d552b6a7eace9","windows":"1:370802731084:web:29359ebd8cbe129c7eace9"}}},"macos":{"default":{"projectId":"swift-26949","appId":"1:370802731084:ios:b7e2434058c4b1c47eace9","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}}}}}
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "swift-26949",
+          "appId": "1:370802731084:android:19551b35d578c5817eace9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "swift-26949",
+          "appId": "1:370802731084:ios:b7e2434058c4b1c47eace9",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "swift-26949",
+          "configurations": {
+            "android": "1:370802731084:android:19551b35d578c5817eace9",
+            "ios": "1:370802731084:ios:b7e2434058c4b1c47eace9",
+            "macos": "1:370802731084:ios:b7e2434058c4b1c47eace9",
+            "web": "1:370802731084:web:3fc6b7a31d552b6a7eace9",
+            "windows": "1:370802731084:web:29359ebd8cbe129c7eace9"
+          }
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "swift-26949",
+          "appId": "1:370802731084:ios:b7e2434058c4b1c47eace9",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  }
+}

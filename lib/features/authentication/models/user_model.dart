@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_admin_panel/utils/formatters/formatter.dart';
 import 'package:ecommerce_admin_panel/utils/constants/enums.dart';
+import 'package:flutter/foundation.dart';
 
 /// Model class representing user data.
 class UserModel {
@@ -48,27 +49,67 @@ class UserModel {
       DocumentSnapshot<Map<String, dynamic>> document) {
     if (document.data() != null) {
       final data = document.data()!;
+      debugPrint('DEBUG: Raw Firestore data: $data');
+      debugPrint('DEBUG: Document ID: ${document.id}');
+
+      final firstName = data['firstName'] as String? ?? '';
+      final lastName = data['lastName'] as String? ?? '';
+      final userName = data['userName'] as String? ?? '';
+      final email = data['email'] as String? ?? '';
+      final phoneNumber = data['phoneNumber'] as String? ?? '';
+      final profilePicture = data['profilePicture'] as String? ?? '';
+      final roleData = data['role'];
+
+      debugPrint(
+          'DEBUG: Extracted fields - firstName: $firstName, lastName: $lastName, email: $email, roleData: $roleData');
+
+      final role =
+          data.containsKey('role') ? _parseRole(data['role']) : AppRole.user;
+
+      debugPrint('DEBUG: Final parsed role: $role');
+
       return UserModel(
         id: document.id,
-        firstName: data['firstName'] as String? ?? '',
-        lastName: data['lastName'] as String? ?? '',
-        userName: data['userName'] as String? ?? '',
-        email: data['email'] as String? ?? '',
-        phoneNumber: data['phoneNumber'] as String? ?? '',
-        profilePicture: data['profilePicture'] as String? ?? '',
-        role: data.containsKey('role')
-            ? (data['role']?.toString().toLowerCase() ==
-                    AppRole.admin.name.toLowerCase()
-                ? AppRole.admin
-                : AppRole.user)
-            : AppRole.user,
+        firstName: firstName,
+        lastName: lastName,
+        userName: userName,
+        email: email,
+        phoneNumber: phoneNumber,
+        profilePicture: profilePicture,
+        role: role,
         createdAt:
             (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
         updatedAt:
             (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       );
     } else {
+      debugPrint('DEBUG: Document data is null, returning empty user');
       return UserModel.empty();
+    }
+  }
+
+  /// Parse role from Firestore data with debug logging
+  static AppRole _parseRole(dynamic roleData) {
+    if (roleData == null) {
+      print('DEBUG: Role data is null, defaulting to user');
+      return AppRole.user;
+    }
+
+    final roleString = roleData.toString().toLowerCase().trim();
+    print('DEBUG: Parsing role from Firestore: "$roleString"');
+    print('DEBUG: Expected admin name: "${AppRole.admin.name.toLowerCase()}"');
+    print('DEBUG: Expected user name: "${AppRole.user.name.toLowerCase()}"');
+
+    if (roleString == AppRole.admin.name.toLowerCase()) {
+      print('DEBUG: Role matched admin');
+      return AppRole.admin;
+    } else if (roleString == AppRole.user.name.toLowerCase()) {
+      print('DEBUG: Role matched user');
+      return AppRole.user;
+    } else {
+      print(
+          'DEBUG: Role "$roleString" did not match any enum, defaulting to user');
+      return AppRole.user;
     }
   }
 

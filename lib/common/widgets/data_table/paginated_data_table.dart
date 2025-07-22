@@ -20,6 +20,7 @@ class TPaginatedDataTable extends StatelessWidget {
     this.dataRowHeight = TSizes.xl * 2,
     this.sortAscending = true,
     this.minWidth = 1000,
+    this.onSelectAll,
   });
 
   /// Whether to sort the DataTable in ascending or descending order.
@@ -39,6 +40,9 @@ class TPaginatedDataTable extends StatelessWidget {
 
   /// Callback function to handle page changes.
   final Function(int)? onPageChanged;
+
+  /// Callback function to handle select all.
+  final Function(bool?)? onSelectAll;
 
   /// Height of each data row in the DataTable.
   final double dataRowHeight;
@@ -70,6 +74,7 @@ class TPaginatedDataTable extends StatelessWidget {
           showCheckboxColumn: true,
           sortAscending: sortAscending,
           onPageChanged: onPageChanged,
+          onSelectAll: onSelectAll,
           dataRowHeight: dataRowHeight,
           renderEmptyRowsInTheEnd: false,
           onRowsPerPageChanged: (noOfRows) {},

@@ -9,10 +9,23 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
 class OrderRows extends DataTableSource {
+  final Set<int> _selectedRows = <int>{};
+
   @override
   DataRow? getRow(int index) {
     final order = DashboardController.orders[index];
+    final bool isSelected = _selectedRows.contains(index);
+
     return DataRow2(
+      selected: isSelected,
+      onSelectChanged: (bool? selected) {
+        if (selected == true) {
+          _selectedRows.add(index);
+        } else {
+          _selectedRows.remove(index);
+        }
+        notifyListeners();
+      },
       cells: [
         DataCell(
           Text(
@@ -54,5 +67,18 @@ class OrderRows extends DataTableSource {
   int get rowCount => DashboardController.orders.length;
 
   @override
-  int get selectedRowCount => 0;
+  int get selectedRowCount => _selectedRows.length;
+
+  void selectAll() {
+    _selectedRows.clear();
+    for (int i = 0; i < rowCount; i++) {
+      _selectedRows.add(i);
+    }
+    notifyListeners();
+  }
+
+  void selectNone() {
+    _selectedRows.clear();
+    notifyListeners();
+  }
 }

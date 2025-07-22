@@ -1,3 +1,4 @@
+import 'package:ecommerce_admin_panel/Routes/routes.dart';
 import 'package:ecommerce_admin_panel/data/repositories/authentication/authentication_repository.dart';
 import 'package:ecommerce_admin_panel/data/repositories/user/user_repository.dart';
 import 'package:ecommerce_admin_panel/features/authentication/controllers/user_controller.dart';
@@ -90,8 +91,20 @@ class LoginController extends GetxController {
       // Fetch user details
       debugPrint('Fetching user details...');
       final userController = Get.put(UserController());
-      final user = await userController.fetchUserDetails();
-      debugPrint('User fetched: ${user.email}, Role: ${user.role}');
+      var user = await userController.fetchUserDetails();
+      debugPrint('User fetched: ${user.email}, role: ${user.role}');
+
+      // Auto-promote hemel2002@gmail.com to admin if not already admin
+      if (user.email.isEmpty || user.role != AppRole.admin) {
+        final currentUser = AuthenticationRepository.instance.currentUser;
+        if (currentUser?.email == 'hemel2002@gmail.com') {
+          debugPrint('Auto-promoting hemel2002@gmail.com to admin...');
+          await userController.promoteCurrentUserToAdmin();
+          // Fetch user details again to get updated role
+          user = await userController.fetchUserDetails();
+          debugPrint('User updated: ${user.email}, role: ${user.role}');
+        }
+      }
 
       // If user is not admin, logout and show error
       if (user.role != AppRole.admin) {
@@ -104,9 +117,9 @@ class LoginController extends GetxController {
         );
         return;
       } else {
-        // Stop loading and redirect to admin dashboard
+        // Stop loading and redirect to dashboard (not media directly)
         TFullScreenLoader.stopLoading();
-        AuthenticationRepository.instance.ScreenRedirect();
+        Get.offAllNamed(TRoutes.dashboard);
       }
     } catch (e) {
       TFullScreenLoader.stopLoading();

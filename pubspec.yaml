@@ -17,7 +17,6 @@ dependencies:
   clipboard: ^0.1.3
   image_picker: ^1.1.2
   url_launcher: ^6.3.1
-  flutter_dropzone: ^4.2.1
   flutter_typeahead: ^5.2.0
   connectivity_plus: ^6.1.4
   multi_select_flutter: ^4.1.3
@@ -31,6 +30,7 @@ dependencies:
   fl_chart: ^1.0.0
   data_table_2: ^2.6.0
   http: ^1.4.0
+  crypto: ^3.0.6
 
   # Icons
   iconsax: ^0.0.8

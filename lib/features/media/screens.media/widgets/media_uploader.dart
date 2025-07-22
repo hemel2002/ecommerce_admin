@@ -29,7 +29,7 @@ class MediaUploader extends StatelessWidget {
 
         if (images.isNotEmpty) {
           final files = images.map((image) => File(image.path)).toList();
-          controller.handleFileDrop(files);
+          controller.handlePickedImages(files);
         }
       } catch (e) {
         Get.snackbar('Error', 'Failed to pick images: ${e.toString()}');
@@ -104,44 +104,89 @@ class MediaUploader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Folder Selection Row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Folder Selection Section
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             'Select Folder',
                             style: Theme.of(context).textTheme.headlineSmall,
                           ),
-                          const SizedBox(width: TSizes.spaceBtwItems),
-                          MediaFolderDropdown(
-                            onChanged: (MediaCategory? newValue) {
-                              if (newValue != null) {
-                                controller.selectedCategory.value = newValue;
-                              }
-                            },
-                          ), // MediaFolderDropdown
+                          TextButton(
+                            onPressed: () => controller.clearFiles(),
+                            child: const Text('Remove All'),
+                          ),
                         ],
                       ),
-                      TextButton(
-                        onPressed: () => controller.clearFiles(),
-                        child: const Text('Remove All'),
-                      ),
+                      const SizedBox(height: TSizes.spaceBtwItems / 2),
+                      MediaFolderDropdown(
+                        onChanged: (MediaCategory? newValue) {
+                          if (newValue != null) {
+                            controller.selectedCategory.value = newValue;
+                            // Also update selectedPath to match the category
+                            controller.selectedPath.value = newValue;
+                          }
+                        },
+                      ), // MediaFolderDropdown
+
+                      // Warning message when no folder is selected
+                      Obx(() {
+                        if (controller.selectedCategory.value ==
+                            MediaCategory.folders) {
+                          return Container(
+                            margin: const EdgeInsets.only(
+                                top: TSizes.spaceBtwItems / 2),
+                            padding: const EdgeInsets.all(TSizes.sm),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(TSizes.sm),
+                              border: Border.all(
+                                color: Colors.orange.withOpacity(0.3),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: Colors.orange,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: TSizes.spaceBtwItems / 2),
+                                Expanded(
+                                  child: Text(
+                                    'Please select a folder before uploading images',
+                                    style: TextStyle(
+                                      color: Colors.orange.shade700,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
                     ],
-                  ), // Folder Selection Row
+                  ), // Folder Selection Section
                   const SizedBox(height: TSizes.spaceBtwSections),
 
                   // Image Preview Area
                   Obx(
                     () => controller.isLoading.value
                         ? _buildShimmerLoading()
-                        : controller.uploadedFiles.isNotEmpty
+                        : controller.selectedImagesToUpload.isNotEmpty
                             ? Wrap(
                                 alignment: WrapAlignment.start,
                                 spacing: TSizes.spaceBtwItems / 2,
                                 runSpacing: TSizes.spaceBtwItems / 2,
-                                children: controller.uploadedFiles.map((file) {
+                                children: controller.selectedImagesToUpload
+                                    .map((imageModel) {
                                   return Stack(
                                     children: [
                                       Container(
@@ -155,25 +200,39 @@ class MediaUploader extends StatelessWidget {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(8),
-                                          child: Image.file(
-                                            file,
-                                            width: 90,
-                                            height: 90,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Container(
-                                                width: 90,
-                                                height: 90,
-                                                color:
-                                                    TColors.primaryBackground,
-                                                child: const Icon(
-                                                  Icons.error,
-                                                  color: Colors.red,
+                                          child: imageModel
+                                                      .localImageToDisplay !=
+                                                  null
+                                              ? Image.memory(
+                                                  imageModel
+                                                      .localImageToDisplay!,
+                                                  width: 90,
+                                                  height: 90,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return Container(
+                                                      width: 90,
+                                                      height: 90,
+                                                      color: TColors
+                                                          .primaryBackground,
+                                                      child: const Icon(
+                                                        Icons.error,
+                                                        color: Colors.red,
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              : Container(
+                                                  width: 90,
+                                                  height: 90,
+                                                  color:
+                                                      TColors.primaryBackground,
+                                                  child: const Icon(
+                                                    Icons.image,
+                                                    color: TColors.darkGrey,
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          ),
                                         ),
                                       ),
                                       // Remove button for each image
@@ -181,8 +240,15 @@ class MediaUploader extends StatelessWidget {
                                         top: 4,
                                         right: 4,
                                         child: GestureDetector(
-                                          onTap: () =>
-                                              controller.removeFile(file),
+                                          onTap: () {
+                                            final index = controller
+                                                .selectedImagesToUpload
+                                                .indexOf(imageModel);
+                                            if (index != -1) {
+                                              controller
+                                                  .removeSelectedImage(index);
+                                            }
+                                          },
                                           child: Container(
                                             width: 20,
                                             height: 20,
@@ -230,7 +296,7 @@ class MediaUploader extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => controller.confirmUploadImages(),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
