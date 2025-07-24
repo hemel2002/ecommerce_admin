@@ -1,16 +1,20 @@
 import 'package:ecommerce_admin_panel/common/widgets/containers/rounded_container.dart';
+import 'package:ecommerce_admin_panel/common/widgets/loaders/animation_loader.dart';
 import 'package:ecommerce_admin_panel/common/widgets/shimmers/shimmer.dart';
 import 'package:ecommerce_admin_panel/features/media/controllers/media_controller.dart';
 import 'package:ecommerce_admin_panel/features/media/models/image_model.dart';
 import 'package:ecommerce_admin_panel/features/media/screens.media/widgets/floder_dropdown.dart';
 import 'package:ecommerce_admin_panel/features/media/screens.media/widgets/sort_dropdown.dart';
+import 'package:ecommerce_admin_panel/features/media/screens.media/widgets/view_image_details.dart';
 import 'package:ecommerce_admin_panel/utils/constants/colors.dart';
 import 'package:ecommerce_admin_panel/utils/constants/enums.dart';
+import 'package:ecommerce_admin_panel/utils/constants/image_strings.dart';
 import 'package:ecommerce_admin_panel/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lottie/lottie.dart';
 
 class MediaContent extends StatelessWidget {
   MediaContent({super.key});
@@ -175,7 +179,7 @@ class MediaContent extends StatelessWidget {
                 children: [
                   // Folder Dropdown
                   Expanded(
-                    flex: 2,
+                    flex: 1,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -188,13 +192,11 @@ class MediaContent extends StatelessWidget {
                         ),
                         const SizedBox(height: TSizes.spaceBtwItems / 4),
                         MediaFolderDropdown(
-                          onChanged: (MediaCategory? newValue) {
+                          onChanged: (MediaCategory? newValue) async {
                             if (newValue != null) {
-                              controller.selectedCategory.value = newValue;
-                              // Also update selectedPath to match the category
-                              controller.selectedPath.value = newValue;
-                              // Reset display count to 8 when changing category
                               displayCount.value = 8;
+                              await controller
+                                  .changeFolderWithLoading(newValue);
                             }
                           },
                         ),
@@ -202,10 +204,9 @@ class MediaContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: TSizes.spaceBtwItems),
-
                   // Sort Dropdown
                   Expanded(
-                    flex: 2,
+                    flex: 1,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -219,7 +220,6 @@ class MediaContent extends StatelessWidget {
                         const SizedBox(height: TSizes.spaceBtwItems / 4),
                         MediaSortDropdown(
                           onChanged: (SortType? newValue) {
-                            // Reset display count to 8 when changing sort type to see immediate effect
                             displayCount.value = 8;
                           },
                         ),
@@ -236,11 +236,19 @@ class MediaContent extends StatelessWidget {
           Container(
             height: 400, // Fixed height for the media grid
             width: double.infinity, // Take full width
-            child: Obx(() => controller.isLoadingMediaContent.value
-                ? _buildShimmerGrid()
-                : controller.allImages.isEmpty
-                    ? _buildEmptyState()
-                    : _buildMediaGrid()),
+            child: Obx(() {
+              // Show loading animation when folder is changing
+              if (controller.isLoadingFolderChange.value) {
+                return _buildFolderChangeLoadingWidget(context);
+              }
+
+              // Show normal content loading or media grid
+              return controller.isLoadingMediaContent.value
+                  ? _buildShimmerGrid()
+                  : controller.allImages.isEmpty
+                      ? _buildEmptyState(context)
+                      : _buildMediaGrid(context);
+            }),
           ),
 
           // Load More Button
@@ -259,6 +267,7 @@ class MediaContent extends StatelessWidget {
                         width: TSizes.buttonWidth,
                         child: ElevatedButton.icon(
                           onPressed: () {
+                            // Preserve scroll position by keeping the widget tree stable
                             displayCount.value += 8; // Load 8 more images
                           },
                           icon: const Icon(Iconsax.add),
@@ -302,32 +311,55 @@ class MediaContent extends StatelessWidget {
   }
 
   // Build empty state when no images are available
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    return _buildEmptyAnimationWidget(context);
+  }
+
+  // Build empty animation widget with TAnimationLoaderWidget
+  Widget _buildEmptyAnimationWidget(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: TSizes.lg * 3),
+      child: TAnimationLoaderWidget(
+        width: 300,
+        height: 300,
+        text: 'Select your Desired Folder',
+        animation: TImages.packageAnimation,
+        style: Theme.of(context).textTheme.titleLarge,
+      ), // TAnimationLoaderWidget
+    ); // Padding
+  }
+
+  // Build folder change loading widget with Lottie animation
+  Widget _buildFolderChangeLoadingWidget(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.image_outlined,
-            size: 60,
-            color: TColors.darkGrey.withOpacity(0.5),
+          // Lottie animation for loading
+          SizedBox(
+            width: 150,
+            height: 150,
+            child: Lottie.asset(
+              TImages.defaultLoaderAnimation,
+              fit: BoxFit.contain,
+              repeat: true,
+              animate: true,
+            ),
           ),
           const SizedBox(height: TSizes.spaceBtwItems),
           Text(
-            'No images found',
-            style: TextStyle(
-              color: TColors.darkGrey,
-              fontWeight: FontWeight.w500,
-              fontSize: 16,
-            ),
+            'Loading images...',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: TColors.darkGrey,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
           const SizedBox(height: TSizes.spaceBtwItems / 2),
           Text(
-            'Upload some images to see them here',
-            style: TextStyle(
-              color: TColors.darkGrey.withOpacity(0.7),
-              fontSize: 14,
-            ),
+            'Please wait while we fetch your media',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: TColors.darkGrey.withOpacity(0.7),
+                ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -335,13 +367,66 @@ class MediaContent extends StatelessWidget {
     );
   }
 
+  // Build simple list item for image display
+  Widget _buildSimpleList(ImageModel image) {
+    return Container(
+      width: 140,
+      height: 140,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: TColors.primaryBackground,
+        border: Border.all(
+          color: TColors.borderSecondary,
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: Image.network(
+          image.url,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const TShimmerEffect(
+                width: 140,
+                height: 140,
+                radius: 8,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              width: 140,
+              height: 140,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: TColors.primaryBackground,
+              ),
+              child: Icon(
+                Icons.broken_image,
+                size: 40,
+                color: TColors.darkGrey.withOpacity(0.5),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   // Build actual media grid with uploaded images from the selected category
-  Widget _buildMediaGrid() {
+  Widget _buildMediaGrid(BuildContext context) {
     // Get filtered and sorted images
     final filteredImages = _getFilteredAndSortedImages();
 
     if (filteredImages.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
 
     return Obx(() {
@@ -356,110 +441,46 @@ class MediaContent extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.start,
             spacing: TSizes.spaceBtwItems / 2,
             runSpacing: TSizes.spaceBtwItems / 2,
-            children: imagesToShow.map((image) {
-              return GestureDetector(
-                onTap: () {
-                  // Handle image tap - could show preview or selection
-                  Get.snackbar(
-                    'Image Selected',
-                    'Filename: ${image.filename}',
-                    duration: const Duration(seconds: 2),
-                  );
-                },
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 90,
-                      height: 90,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: TColors.primaryBackground,
-                        border: Border.all(
-                          color: TColors.borderSecondary,
-                          width: 1,
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.network(
-                          image.url,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const TShimmerEffect(
-                                width: 90,
-                                height: 90,
-                                radius: 8,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: TColors.primaryBackground,
-                              ),
-                              child: Icon(
-                                Icons.broken_image,
-                                size: 40,
-                                color: TColors.darkGrey.withOpacity(0.5),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    // Image info overlay
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: TSizes.xs,
-                          vertical: TSizes.xs / 2,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(8),
-                            bottomRight: Radius.circular(8),
-                          ),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.8),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                        child: Text(
-                          image.filename,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      );
+            children: imagesToShow
+                .map((image) => GestureDetector(
+                      onTap: () {
+                        // Show image details popup
+                        Get.dialog(
+                          ImagePopup(image: image),
+                          barrierDismissible: true,
+                        );
+                      },
+                      child: SizedBox(
+                        width: 140,
+                        height: 180,
+                        child: Column(
+                          children: [
+                            _buildSimpleList(image),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: TSizes.sm),
+                                child: Text(
+                                  image.filename,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ), // Padding
+                            ), // Expanded
+                          ],
+                        ), // Column
+                      ), // SizedBox
+                    )) // GestureDetector
+                .toList(),
+          ), // Wrap
+        ), // Align
+      ); // SingleChildScrollView
     });
   }
 }

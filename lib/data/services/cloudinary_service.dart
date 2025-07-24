@@ -116,15 +116,70 @@ class CloudinaryService {
     return '$baseUrl/$transformString/$publicId';
   }
 
-  /// Delete image from Cloudinary (requires backend implementation)
+  /// Delete image from Cloudinary
   Future<void> deleteImage(String publicId) async {
     try {
-      debugPrint('DEBUG: Would delete image with public ID: $publicId');
-      // Note: Deletion requires server-side implementation with admin API
-      // You would typically call your backend API to delete the image
+      debugPrint('DEBUG: Attempting to delete image with public ID: $publicId');
+
+      // Generate timestamp and signature for deletion
+      final timestamp = (DateTime.now().millisecondsSinceEpoch / 1000).round();
+      final signature = _generateDeleteSignature(
+        publicId: publicId,
+        timestamp: timestamp,
+      );
+
+      // Cloudinary delete API URL
+      final deleteUrl =
+          'https://api.cloudinary.com/v1_1/$_cloudName/image/destroy';
+
+      // Create form data for delete request
+      final Map<String, String> formData = {
+        'api_key': _apiKey,
+        'timestamp': timestamp.toString(),
+        'signature': signature,
+        'public_id': publicId,
+      };
+
+      debugPrint('DEBUG: Sending delete request to Cloudinary...');
+
+      // Send delete request
+      final response = await http.post(
+        Uri.parse(deleteUrl),
+        body: formData,
+      );
+
+      debugPrint('DEBUG: Delete response status: ${response.statusCode}');
+      debugPrint('DEBUG: Delete response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['result'] == 'ok') {
+          debugPrint('DEBUG: Image deleted successfully from Cloudinary');
+        } else {
+          throw 'Failed to delete image: ${responseData['result']}';
+        }
+      } else {
+        final errorData = json.decode(response.body);
+        throw 'Delete failed: ${errorData['error']?['message'] ?? 'Unknown error'}';
+      }
     } catch (e) {
-      debugPrint('DEBUG: Error deleting image: $e');
-      rethrow;
+      debugPrint('ERROR: Cloudinary delete error: $e');
+      throw 'Failed to delete from Cloudinary: ${e.toString()}';
     }
+  }
+
+  /// Generate signature for delete operation
+  String _generateDeleteSignature({
+    required String publicId,
+    required int timestamp,
+  }) {
+    // Create parameters string in alphabetical order
+    final params = 'public_id=$publicId&timestamp=$timestamp$_apiSecret';
+
+    // Generate SHA1 hash
+    final bytes = utf8.encode(params);
+    final digest = sha1.convert(bytes);
+
+    return digest.toString();
   }
 }

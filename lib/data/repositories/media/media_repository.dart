@@ -146,4 +146,28 @@ class MediaRepository extends GetxController {
       throw 'Failed to fetch images: ${e.toString()}';
     }
   }
+
+  // Delete image from Firebase Firestore
+  Future<void> deleteImageFromFirestore(String imageId) async {
+    try {
+      await _firestore.collection('Media').doc(imageId).delete();
+      debugPrint('DEBUG: Image deleted from Firestore with ID: $imageId');
+    } on FirebaseException catch (e) {
+      throw e.message ?? 'Failed to delete image from Firestore';
+    } catch (e) {
+      throw 'Failed to delete image from Firestore: ${e.toString()}';
+    }
+  }
+
+  // Delete image from Cloudinary
+  Future<void> deleteImageFromCloudinary(String publicId) async {
+    try {
+      await _cloudinaryService.deleteImage(publicId);
+      debugPrint(
+          'DEBUG: Image deleted from Cloudinary with public_id: $publicId');
+    } catch (e) {
+      debugPrint('ERROR: Failed to delete from Cloudinary: $e');
+      throw 'Failed to delete image from Cloudinary: ${e.toString()}';
+    }
+  }
 }

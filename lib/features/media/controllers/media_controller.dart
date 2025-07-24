@@ -11,6 +11,7 @@ import 'package:ecommerce_admin_panel/utils/popups/loaders.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 
 /// Controller for managing media operations
 class MediaController extends GetxController {
@@ -25,6 +26,7 @@ class MediaController extends GetxController {
   final RxBool isLoadingMediaContent = false.obs;
   final RxBool isLoading = false.obs;
   final RxBool isUploading = false.obs;
+  final RxBool isLoadingFolderChange = false.obs;
   final RxInt mediaContentItemCount = 8.obs;
   final Rx<MediaCategory> selectedCategory = MediaCategory.banners.obs;
   final Rx<MediaCategory> selectedPath = MediaCategory.banners.obs;
@@ -563,5 +565,265 @@ class MediaController extends GetxController {
   /// Clear all selected images
   void clearSelectedImages() {
     selectedImagesToUpload.clear();
+  }
+
+  /// Handle folder change with loading animation
+  Future<void> changeFolderWithLoading(MediaCategory newCategory) async {
+    try {
+      // Start loading animation
+      isLoadingFolderChange.value = true;
+
+      // Update category
+      selectedCategory.value = newCategory;
+      selectedPath.value = newCategory;
+
+      // Refresh media content to ensure we have the latest data
+      await fetchMediaContent();
+
+      // Add a brief delay for smooth animation transition
+      await Future.delayed(const Duration(milliseconds: 300));
+    } finally {
+      // Stop loading animation
+      isLoadingFolderChange.value = false;
+    }
+  }
+
+  /// Delete image from both Firebase and Cloudinary
+  Future<void> deleteImage(ImageModel image) async {
+    try {
+      // Show confirmation dialog
+      final bool? shouldDelete = await Get.dialog<bool>(
+        AlertDialog(
+          title: const Text('Delete Image'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Are you sure you want to delete this image?'),
+              const SizedBox(height: 16),
+              Text(
+                'Filename: ${image.filename}',
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'This action cannot be undone.',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Get.back(result: true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+
+      if (shouldDelete != true) {
+        return;
+      }
+
+      // Show loading dialog during deletion process
+      Get.dialog(
+        PopScope(
+          canPop: false,
+          child: AlertDialog(
+            title: const Text('Deleting Image'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Lottie animation for deletion
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Lottie.asset(
+                    TImages.deleteAnimation,
+                    fit: BoxFit.contain,
+                    repeat: true,
+                    animate: true,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Deleting "${image.filename}"...',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Removing from storage and database',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Delete from Firebase Firestore
+      await mediaRepository.deleteImageFromFirestore(image.id);
+
+      // Delete from Cloudinary (extract public_id from URL)
+      final String? publicId = _extractPublicIdFromUrl(image.url);
+      if (publicId != null) {
+        await mediaRepository.deleteImageFromCloudinary(publicId);
+      }
+
+      // Remove from local lists
+      allImages.removeWhere((img) => img.id == image.id);
+      _removeFromCategoryList(image);
+
+      // Close the loading dialog
+      Get.back();
+
+      // Show success animation briefly
+      Get.dialog(
+        PopScope(
+          canPop: false,
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Success animation
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: Lottie.asset(
+                    TImages.deleteSuccessAnimation,
+                    fit: BoxFit.contain,
+                    repeat: false,
+                    animate: true,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Image Deleted Successfully!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Auto-close success dialog after 2 seconds
+      await Future.delayed(const Duration(seconds: 2));
+      Get.back(); // Close success dialog
+
+      // Close the image popup modal
+      Get.back();
+
+      // Show success message
+      TLoaders.successSnackBar(
+        title: 'Success',
+        message: 'Image deleted successfully',
+      );
+    } catch (error) {
+      // Close loading dialog if it's open
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      TLoaders.errorSnackBar(
+        title: 'Error',
+        message: 'Failed to delete image: $error',
+      );
+    }
+  }
+
+  /// Extract public_id from Cloudinary URL
+  String? _extractPublicIdFromUrl(String url) {
+    try {
+      debugPrint('DEBUG: Extracting public_id from URL: $url');
+
+      // Cloudinary URL format: https://res.cloudinary.com/[cloud_name]/image/upload/[folder]/[filename].[format]
+      // OR: https://res.cloudinary.com/[cloud_name]/image/upload/v[version]/[folder]/[filename].[format]
+      final Uri uri = Uri.parse(url);
+      final List<String> pathSegments = uri.pathSegments;
+
+      debugPrint('DEBUG: Path segments: $pathSegments');
+
+      // Find the segment after 'upload'
+      final int uploadIndex = pathSegments.indexOf('upload');
+      if (uploadIndex != -1 && uploadIndex + 1 < pathSegments.length) {
+        // Get all segments after 'upload'
+        List<String> publicIdParts = pathSegments.sublist(uploadIndex + 1);
+
+        // Skip version if it starts with 'v' followed by numbers
+        if (publicIdParts.isNotEmpty &&
+            RegExp(r'^v\d+$').hasMatch(publicIdParts[0])) {
+          publicIdParts = publicIdParts.sublist(1);
+        }
+
+        if (publicIdParts.isNotEmpty) {
+          // Join all parts except remove extension from the last part
+          String lastPart = publicIdParts.last;
+          final int lastDotIndex = lastPart.lastIndexOf('.');
+          if (lastDotIndex != -1) {
+            publicIdParts[publicIdParts.length - 1] =
+                lastPart.substring(0, lastDotIndex);
+          }
+
+          String publicId = publicIdParts.join('/');
+          debugPrint('DEBUG: Extracted public_id: $publicId');
+          return publicId;
+        }
+      }
+
+      debugPrint('DEBUG: Failed to extract public_id from URL');
+      return null;
+    } catch (e) {
+      debugPrint('ERROR: Error extracting public_id from URL: $e');
+      return null;
+    }
+  }
+
+  /// Remove image from appropriate category list
+  void _removeFromCategoryList(ImageModel image) {
+    switch (image.mediaCategory) {
+      case 'banners':
+        allBannerImages.removeWhere((img) => img.id == image.id);
+        break;
+      case 'products':
+        allProductImages.removeWhere((img) => img.id == image.id);
+        break;
+      case 'brands':
+        allBrandImages.removeWhere((img) => img.id == image.id);
+        break;
+      case 'categories':
+        allCategoryImages.removeWhere((img) => img.id == image.id);
+        break;
+      case 'users':
+        allUserImages.removeWhere((img) => img.id == image.id);
+        break;
+    }
   }
 }
