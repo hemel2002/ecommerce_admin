@@ -274,8 +274,8 @@ class LoginController extends GetxController {
   Future<void> createAdminNow() async {
     try {
       // Use default admin credentials from TTexts
-      final adminEmail = TTexts.adminEmail;
-      final adminPassword = TTexts.adminPassword;
+      const adminEmail = TTexts.adminEmail;
+      const adminPassword = TTexts.adminPassword;
 
       debugPrint('Creating admin user: $adminEmail');
 

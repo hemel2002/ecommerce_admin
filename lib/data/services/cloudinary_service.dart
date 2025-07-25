@@ -104,7 +104,7 @@ class CloudinaryService {
   /// Generate optimized URL for display
   String getOptimizedUrl(String publicId,
       {int? width, int? height, String quality = 'auto'}) {
-    final baseUrl = 'https://res.cloudinary.com/$_cloudName/image/upload';
+    const baseUrl = 'https://res.cloudinary.com/$_cloudName/image/upload';
     final transforms = <String>[];
 
     if (width != null) transforms.add('w_$width');
@@ -129,7 +129,7 @@ class CloudinaryService {
       );
 
       // Cloudinary delete API URL
-      final deleteUrl =
+      const deleteUrl =
           'https://api.cloudinary.com/v1_1/$_cloudName/image/destroy';
 
       // Create form data for delete request

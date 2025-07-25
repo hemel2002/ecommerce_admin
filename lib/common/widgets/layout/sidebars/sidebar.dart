@@ -58,37 +58,37 @@ class TSidebar extends StatelessWidget {
 
               // Menu Section
               _buildMenuSection(context, "MENU", [
-                MenuWidget(
+                const MenuWidget(
                   title: 'Dashboard',
                   icon: Icons.dashboard_outlined,
                   route: TRoutes.dashboard,
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.shopping_cart_outlined,
                   title: "Products",
                   route: TRoutes.products,
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.category_outlined,
                   title: "Categories",
                   route: TRoutes.categories,
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.perm_media_outlined,
                   title: "Media",
                   route: TRoutes.media,
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.people_outline,
                   title: "Customers",
                   route: TRoutes.customers ?? '/customers',
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.receipt_long_outlined,
                   title: "Orders",
                   route: TRoutes.orders ?? '/orders',
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.analytics_outlined,
                   title: "Analytics",
                   route: TRoutes.analytics ?? '/analytics',
@@ -99,12 +99,12 @@ class TSidebar extends StatelessWidget {
 
               // System Section
               _buildMenuSection(context, "SYSTEM", [
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.settings_outlined,
                   title: "Settings",
                   route: TRoutes.settings,
                 ),
-                MenuWidget(
+                const MenuWidget(
                   icon: Icons.logout_outlined,
                   title: "Logout",
                   route: '/logout',
@@ -229,7 +229,7 @@ class MenuWidget extends StatelessWidget {
                       ),
                     ),
                     if (isActive)
-                      Icon(
+                      const Icon(
                         Icons.chevron_right,
                         color: TColors.primary,
                         size: 16,

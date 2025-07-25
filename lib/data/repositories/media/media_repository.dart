@@ -56,7 +56,7 @@ class MediaRepository extends GetxController {
         contentType: _getContentType(cleanImageName),
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
-        fullPath: '${cleanPath}/${cleanImageName}',
+        fullPath: '$cleanPath/$cleanImageName',
       );
 
       debugPrint('DEBUG: ImageModel created successfully');

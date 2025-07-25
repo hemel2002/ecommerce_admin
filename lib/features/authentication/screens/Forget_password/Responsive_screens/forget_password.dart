@@ -11,7 +11,7 @@ class ForgetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
-    final MaterialAccentColor themeColor = Colors.deepPurpleAccent;
+    const MaterialAccentColor themeColor = Colors.deepPurpleAccent;
     final TextEditingController emailController = TextEditingController();
 
     final List<Widget> child = [
@@ -99,7 +99,7 @@ class ForgetScreen extends StatelessWidget {
       // Back to login
       TextButton(
         onPressed: () => Get.back(),
-        child: Text(
+        child: const Text(
           "Back to Login",
           style: TextStyle(
             color: Colors.white70,

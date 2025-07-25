@@ -132,7 +132,7 @@ class ImagePopup extends StatelessWidget {
                           width: 1,
                         ),
                       ),
-                      constraints: BoxConstraints(
+                      constraints: const BoxConstraints(
                         minHeight: 60, // Ensure minimum height
                       ),
                       child: SingleChildScrollView(
@@ -159,7 +159,8 @@ class ImagePopup extends StatelessWidget {
                         },
                         style: OutlinedButton.styleFrom(
                           foregroundColor: TColors.primary,
-                          side: BorderSide(color: TColors.primary, width: 2),
+                          side: const BorderSide(
+                              color: TColors.primary, width: 2),
                           backgroundColor: TColors.primary.withOpacity(0.05),
                           shape: RoundedRectangleBorder(
                             borderRadius:
@@ -170,7 +171,7 @@ class ImagePopup extends StatelessWidget {
                             vertical: TSizes.sm,
                           ),
                         ),
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.copy_rounded,
                           size: 20,
                           color: TColors.primary,

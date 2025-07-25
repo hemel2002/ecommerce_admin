@@ -350,7 +350,7 @@ class MediaController extends GetxController {
           debugPrint(
               'DEBUG: Image successfully processed: ${uploadedImage.filename}');
         } catch (e) {
-          debugPrint('DEBUG: Upload error for image ${i}: $e');
+          debugPrint('DEBUG: Upload error for image $i: $e');
           TLoaders.errorSnackBar(
             title: 'Upload Failed',
             message:

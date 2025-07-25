@@ -8,14 +8,14 @@ import 'package:get/get.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-class CreateCategoryScreen extends StatefulWidget {
-  const CreateCategoryScreen({super.key});
+class EditCategoryScreen extends StatefulWidget {
+  const EditCategoryScreen({super.key});
 
   @override
-  State<CreateCategoryScreen> createState() => _CreateCategoryScreenState();
+  State<EditCategoryScreen> createState() => _EditCategoryScreenState();
 }
 
-class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
+class _EditCategoryScreenState extends State<EditCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   String? _selectedParentCategory;
@@ -23,6 +23,37 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   bool _isActive = true;
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
+
+  // Category data and index from navigation arguments
+  Map<String, dynamic>? categoryData;
+  int? categoryIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    // Get the category data passed from the table
+    final arguments = Get.arguments;
+    if (arguments != null && arguments is Map) {
+      categoryData = arguments['categoryData'] as Map<String, dynamic>;
+      categoryIndex = arguments['categoryIndex'] as int;
+      _initializeFields();
+    }
+  }
+
+  // Initialize form fields with existing category data
+  void _initializeFields() {
+    if (categoryData != null) {
+      _nameController.text = categoryData!['name'] ?? '';
+      _selectedParentCategory = categoryData!['parentCategory'] == 'None' ? null : categoryData!['parentCategory'];
+      _isFeatured = categoryData!['featured'] ?? false;
+      _isActive = categoryData!['status'] == 'Active';
+
+      // Load existing image if available
+      if (categoryData!['image'] != null && categoryData!['image'].isNotEmpty) {
+        _selectedImage = File(categoryData!['image']);
+      }
+    }
+  }
 
   // Method to pick image from gallery
   Future<void> _pickImage() async {
@@ -60,8 +91,8 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
             children: [
               // Breadcrumbs
               const TBreadcrumbsWithHeading(
-                heading: 'Create Category',
-                breadcrumbItems: ['Categories', 'Create'],
+                heading: 'Edit Category',
+                breadcrumbItems: ['Categories', 'Edit'],
                 returnToPrevioiusScreen: true,
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
@@ -115,8 +146,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                                           width: double.infinity,
                                           height: double.infinity,
                                           decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(8),
                                             image: DecorationImage(
                                               image: FileImage(_selectedImage!),
                                               fit: BoxFit.cover,
@@ -141,8 +171,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                                       ],
                                     )
                                   : Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(
                                           Icons.cloud_upload_outlined,
@@ -152,8 +181,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                                         const SizedBox(height: 16),
                                         ElevatedButton.icon(
                                           onPressed: _pickImage,
-                                          icon: const Icon(
-                                              Icons.add_photo_alternate),
+                                          icon: const Icon(Icons.add_photo_alternate),
                                           label: const Text('Choose Image'),
                                         ),
                                         const SizedBox(height: 8),
@@ -226,41 +254,54 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                         ),
                         const SizedBox(height: TSizes.spaceBtwInputFields + 2),
 
-                        // Submit Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Create category data
-                                final categoryData = {
-                                  'name': _nameController.text,
-                                  'parentCategory':
-                                      _selectedParentCategory ?? 'None',
-                                  'featured': _isFeatured,
-                                  'status': _isActive ? 'Active' : 'Inactive',
-                                  'products': 0,
-                                  'date': DateTime.now()
-                                      .toString()
-                                      .substring(0, 10),
-                                  'image': _selectedImage?.path ?? '',
-                                };
+                        // Action Buttons
+                        Row(
+                          children: [
+                            // Cancel Button
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                            ),
+                            const SizedBox(width: TSizes.spaceBtwItems),
+                            // Update Button
+                            Expanded(
+                              flex: 2,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    // Update category data
+                                    final updatedCategoryData = {
+                                      'name': _nameController.text,
+                                      'parentCategory': _selectedParentCategory ?? 'None',
+                                      'featured': _isFeatured,
+                                      'status': _isActive ? 'Active' : 'Inactive',
+                                      'products': categoryData!['products'] ?? 0,
+                                      'date': categoryData!['date'] ?? DateTime.now().toString().substring(0, 10),
+                                      'image': _selectedImage?.path ?? '',
+                                    };
 
-                                // Add to controller
-                                CategoryController.instance
-                                    .addCategory(categoryData);
+                                    // Update in controller
+                                    if (categoryIndex != null) {
+                                      CategoryController.instance.editCategory(categoryIndex!, updatedCategoryData);
+                                    }
 
-                                // Go back with success message
-                                Get.back();
-                                Get.snackbar(
-                                  'Success',
-                                  'Category "${_nameController.text}" created successfully!',
-                                  snackPosition: SnackPosition.TOP,
-                                );
-                              }
-                            },
-                            child: const Text('Save Category'),
-                          ),
+                                    // Go back with success message
+                                    Get.back();
+                                    Get.snackbar(
+                                      'Success',
+                                      'Category "${_nameController.text}" updated successfully!',
+                                      snackPosition: SnackPosition.TOP,
+                                    );
+                                  }
+                                },
+                                child: const Text('Update Category'),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

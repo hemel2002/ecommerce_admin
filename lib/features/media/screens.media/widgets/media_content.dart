@@ -129,7 +129,7 @@ class MediaContent extends StatelessWidget {
                               const SizedBox(width: TSizes.xs / 2),
                               Text(
                                 sortText,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 10,
                                   color: TColors.darkGrey,
                                   fontWeight: FontWeight.w500,
@@ -233,7 +233,7 @@ class MediaContent extends StatelessWidget {
           const SizedBox(height: TSizes.spaceBtwItems),
 
           // Media Content Grid
-          Container(
+          SizedBox(
             height: 400, // Fixed height for the media grid
             width: double.infinity, // Take full width
             child: Obx(() {

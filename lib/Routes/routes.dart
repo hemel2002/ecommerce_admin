@@ -14,6 +14,8 @@ class TRoutes {
   static const String terms = '/terms';
   static const String privacy = '/privacy';
   static const String products = '/products';
+  static const String createProduct = '/createProduct';
+  static const String editProduct = '/editProduct';
   static const String productDetails = '/product-details';
 
   static const String categories = '/categories';

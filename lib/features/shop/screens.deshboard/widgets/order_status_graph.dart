@@ -85,7 +85,7 @@ class OrderStatusPieChart extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                '${controller.getDisplayStatusName(status)}',
+                                controller.getDisplayStatusName(status),
                               ),
                             ),
                           ],

@@ -20,13 +20,13 @@ class MediaSortDropdown extends StatelessWidget {
       () => DropdownButtonFormField<SortType>(
         isExpanded: true,
         value: controller.selectedSortType.value,
-        items: [
+        items: const [
           DropdownMenuItem(
             value: SortType.latest,
             child: Row(
               children: [
                 Icon(Icons.schedule, size: 16),
-                const SizedBox(width: TSizes.xs),
+                SizedBox(width: TSizes.xs),
                 Expanded(
                     child:
                         Text('Latest first', overflow: TextOverflow.ellipsis)),
@@ -38,7 +38,7 @@ class MediaSortDropdown extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.history, size: 16),
-                const SizedBox(width: TSizes.xs),
+                SizedBox(width: TSizes.xs),
                 Expanded(
                     child:
                         Text('Oldest first', overflow: TextOverflow.ellipsis)),
@@ -50,7 +50,7 @@ class MediaSortDropdown extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.sort_by_alpha, size: 16),
-                const SizedBox(width: TSizes.xs),
+                SizedBox(width: TSizes.xs),
                 Expanded(
                     child:
                         Text('Alphabetical', overflow: TextOverflow.ellipsis)),
@@ -62,7 +62,7 @@ class MediaSortDropdown extends StatelessWidget {
             child: Row(
               children: [
                 Icon(Icons.data_usage, size: 16),
-                const SizedBox(width: TSizes.xs),
+                SizedBox(width: TSizes.xs),
                 Expanded(
                     child: Text('Size (largest first)',
                         overflow: TextOverflow.ellipsis)),

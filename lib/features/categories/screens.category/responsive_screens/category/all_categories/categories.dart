@@ -4,11 +4,11 @@ import 'package:ecommerce_admin_panel/common/widgets/containers/rounded_containe
 import 'package:ecommerce_admin_panel/common/widgets/layout/dashboard_layout.dart';
 import 'package:ecommerce_admin_panel/features/categories/screens.category/responsive_screens/category/all_categories/widgets/table_header.dart';
 import 'package:ecommerce_admin_panel/features/categories/screens.category/responsive_screens/category/all_categories/table/data_table.dart';
+import 'package:ecommerce_admin_panel/features/categories/controllers/category_controller.dart';
 import 'package:ecommerce_admin_panel/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
@@ -16,6 +16,8 @@ class CategoriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
+    final CategoryController categoryController =
+        Get.find<CategoryController>();
 
     return DashboardLayout(
       body: SingleChildScrollView(
@@ -38,9 +40,12 @@ class CategoriesScreen extends StatelessWidget {
                       buttonText: 'Create New Category',
                       onPressed: () => Get.toNamed(TRoutes.createCategory),
                       searchController: searchController,
+                      searchOnChanged: (value) {
+                        categoryController.searchCategories(value);
+                      },
                     ),
-                    SizedBox(height: TSizes.spaceBtwItems),
-                    CategoryTable()
+                    const SizedBox(height: TSizes.spaceBtwItems),
+                    const CategoryTable()
                   ],
                 ),
               )

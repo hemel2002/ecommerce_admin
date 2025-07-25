@@ -3,8 +3,6 @@ import 'package:ecommerce_admin_panel/data/repositories/user/user_repository.dar
 import 'package:ecommerce_admin_panel/features/authentication/models/user_model.dart';
 import 'package:ecommerce_admin_panel/utils/popups/loaders.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 class UserController extends GetxController {
   static UserController get instance => Get.find();

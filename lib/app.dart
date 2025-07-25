@@ -9,7 +9,7 @@ import 'utils/device/web_material_scroll.dart';
 import 'utils/theme/theme.dart';
 
 class App extends StatelessWidget {
-  App({super.key});
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -19,31 +19,32 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final Controller = UserController.instance;
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: TColors.white,
         border: Border(
           bottom: BorderSide(color: TColors.grey, width: 1),
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: TSizes.md, vertical: TSizes.md),
+      padding: const EdgeInsets.symmetric(
+          horizontal: TSizes.md, vertical: TSizes.md),
       child: AppBar(
         leading: IconButton(
-            onPressed: () => scaffoldKey?.currentState?.openDrawer(),
-            icon: Icon(Iconsax.menu, color: TColors.primary, size: 24)),
+            onPressed: () => scaffoldKey.currentState?.openDrawer(),
+            icon: const Icon(Iconsax.menu, color: TColors.primary, size: 24)),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Iconsax.search_normal,
             ),
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Iconsax.notification5,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: (TSizes.spaceBtwItems / 2),
           ),
           Obx(
@@ -63,7 +64,7 @@ class THeader extends StatelessWidget implements PreferredSizeWidget {
                         width: 40,
                         padding: 2,
                       ),
-                SizedBox(
+                const SizedBox(
                   width: TSizes.spaceBtwItems,
                 )
               ],

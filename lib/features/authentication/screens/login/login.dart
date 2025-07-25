@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 
 class AdminLoginScreen extends StatelessWidget {
-  AdminLoginScreen({Key? key}) : super(key: key);
+  AdminLoginScreen({super.key});
 
   final RxBool isHovering = false.obs;
   final MaterialAccentColor themeColor = Colors.deepPurpleAccent;
@@ -197,8 +197,8 @@ class AdminLoginScreen extends StatelessWidget {
     ];
 
     return login_signup_reset(
-      children: child,
       size: size,
+      children: child,
     );
   }
 }

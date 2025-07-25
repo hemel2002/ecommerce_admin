@@ -1,3 +1,18 @@
 {
-  "cmake.sourceDirectory": "/Users/hemal/Downloads/Git/ecommerce_admin/linux"
+  "cmake.sourceDirectory": "linux",
+  "dart.projectSearchDepth": 5,
+  "dart.flutterSdkPath": null,
+  "dart.sdkPath": null,
+  "dart.enableSdkFormatter": true,
+  "dart.lineLength": 120,
+  "dart.insertArgumentPlaceholders": false,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "files.associations": {
+    "*.dart": "dart"
+  }
 }
